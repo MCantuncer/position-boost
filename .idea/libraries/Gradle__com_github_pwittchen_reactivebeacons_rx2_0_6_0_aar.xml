@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.pwittchen:reactivebeacons-rx2:0.6.0@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/reactivebeacons-rx2-0.6.0.aar/a9b7612d5dc6057dfc9752088453fcbf/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/reactivebeacons-rx2-0.6.0.aar/a9b7612d5dc6057dfc9752088453fcbf/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.pwittchen/reactivebeacons-rx2/0.6.0/21dfabb1275fcf56521f01a3f14ed63c23d4670c/reactivebeacons-rx2-0.6.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,40 @@
+Projenin Amacý: 
+-Bu projede GPS sinyallerini kullanamadýðýmýz kapalý alanlar için bir konumlandýrma sistemi tasarlanacaktýr.
+-Tasarlanacak sistemde verici ve alýcý olarak Bluetooth teknolojisi kullanýlacaktýr.
+-Verici olarak en az 3 tane HM-10 Blutooth Low Enerji modülleri iBeacon olarak ayarlanýp konumlandýrmasý yapýlan mekanda önceden belirlenen konumlara yerleþtirilecektir.
+-Alýcý olarak akýllý telefonlardaki Bluetooth teknolojisi kullanýlacaktýr.
+-Her bir beacondan telefona gelen sinyal gücünden (RSSI) o  beacon'a olan uzaklýk hesaplanacak.
+-Konumlarýný bildiðimiz 3 beacon'a olan mesafeleri iþleme sokarak telefonun anlýk(ya da bir kaç saniyelik gecikmeyle) mekan içindeki konumu x,y koordinatý olarak hesaplacaktýr.
+-Hesaplanan x,y koordinatý hali hazýrda mevcut olan mekanýn haritasý üzerinde gösterilecektir.
+-Ayrýca mekan haritasý üzerinde Beaconlarýn konumlarý da gösterilecektir.
+
+-Elde edilen x,y koordinatý, ve zaman bilgisi bir web server'a aktarýlmak üzere listelenecektir.
+
+Yapýlacaklar:
+-Altbeacon kütüphanesi kullanýlarak her bir Beacon'dan gönderilen sinyal ile o Beacon'a ait Mac ID, RSSI okumalarý ve mesafe hesaplamalarý yapýlacaktýr.
+-Altbeacon kütüphanesi anladýðýmýz kadarýyla 6 saniye boyunca tüm Beacon'larý tarayýp liste olarak yukarýdaki tüm deðerleri bize veriyor. 
+-Eðer bu 6 saniye içeririnde ayný cihazý birden fazla okursa, gelen rssi deðerlerinin ortalamasýný alýp(amele filtresi) ardýndan pozisyon algotritmasý için iþleme gönderilecektir.
+-RSSI okumalarýnda fazla zýplamalar olduðu için filtreleme yapýlmasý gerekebilir.(basit bir filtre kullanýlabilir. Örnek tek satýrlýk bir filtre elimizde mevcut.)
+-üçgenleme algoritmasý yazýlacak.(Algoritma elimizde var.)
+
+Notlar:
+
++Demo mekan haritasý jpeg formatýnda elimizde var.
++Jpeg üzerinde konumu gösterme algoritmasý da elimizde var ve çalýþýyor.
+
+
+kaynaklar:
+-altbeacon kütüphanesi: https://github.com/AltBeacon/android-beacon-library
+--
+
+
+tek bir üçgenleme algoritmasý(d=beacon a olan uzaklýk, x ve y ler ise beaconlarýn yerleþtirildikleri konumlarý,x0y0 telefonun hesaplanan konumu):
+	    Double A = (d2 * d2) - (d1 * d1) - (x2 * x2) + (x1 * x1) - (y2 * y2) + (y1 * y1);
+
+            Double B = (d3 * d3) - (d1 * d1) - (x3 * x3) + (x1 * x1) - (y3 * y3) + (y1 * y1);
+
+            Double delta = (4.0d) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2));
+
+            Double x0 = (1.0d / delta) * (2.0d * A * (y1 - y3) - 2.0d * B * (y1 - y2));
+
+            Double y0 = (1.0d / delta) * (2.0d * B * (x1 - x2) - 2.0d * A * (x1 - x3));
