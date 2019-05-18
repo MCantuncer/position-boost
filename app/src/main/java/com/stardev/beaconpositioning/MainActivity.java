@@ -8,10 +8,14 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.github.pwittchen.reactivebeacons.library.rx2.Beacon;
+
+
+//import com.github.pwittchen.reactivebeacons.library.rx2.Beacon;
+
 
 public class MainActivity extends BeaconActivity {
     private final String TAG = "MainActivity";
@@ -19,12 +23,17 @@ public class MainActivity extends BeaconActivity {
 
     public static final float REAL_WIDTH = 8.24f;
     public static final float REAL_HEIGHT = 8.68f;
-    public static final int BEACON_ICON_SIZE = 320;
+    public static final int BEACON_ICON_SIZE = 100;
+
+    // HashMap for all MacAddresses
 
     public PointF[] fixedBeaconCoordinates = {
             new PointF(2,4),
             new PointF(7.5f,7.5f),
-            new PointF(7.5f,2)
+            new PointF(7.5f,2),
+            new PointF(1f,1f)
+
+
     };
     private Bitmap planBitmap;
 
@@ -32,6 +41,37 @@ public class MainActivity extends BeaconActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+/*        beaconManager = BeaconManager.getInstanceForApplication(this);
+
+
+        beaconManager = BeaconManager.getInstanceForApplication(this);
+        // To detect proprietary beacons, you must add a line like below corresponding to your beacon
+        // type.  Do a web search for "setBeaconLayout" to get the proper expression.
+        beaconManager.getBeaconParsers().add(new BeaconParser().
+                setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
+        beaconManager.bind((BeaconConsumer) this);
+
+        MonitorNotifier monitorNotifier = new MonitorNotifier() {
+            @Override
+            public void didEnterRegion(Region region) {
+
+            }
+
+            @Override
+            public void didExitRegion(Region region) {
+
+            }
+
+            @Override
+            public void didDetermineStateForRegion(int i, Region region) {
+
+            }
+        };
+        beaconManager.addMonitorNotifier(monitorNotifier);
+
+*/
 
         // Find views
         imageView = findViewById(R.id.imageView);
@@ -138,7 +178,54 @@ public class MainActivity extends BeaconActivity {
 
     @Override
     protected void beaconDataArrived(Beacon beacon) {
-        Log.d(TAG,"Address: "+ beacon.macAddress + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
+
+
+
+
+        if(beacon.macAddress.address.equals("00:13:AA:00:0A:3C")) // Dummy
+            Log.i(TAG, "Address: "+ beacon.macAddress.address + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
+
+
+        else if(beacon.macAddress.address.equals("00:13:AA:00:11:84")) // Dummy
+            Log.i(TAG, "Address: "+ beacon.macAddress.address + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
+
+        else if(beacon.macAddress.address.equals("00:13:AA:00:09:C4")) // Dummy
+            Log.i(TAG, "Address: "+ beacon.macAddress.address + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
+
+
+        //Log.d(TAG,"Address: "+ beacon.macAddress + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
     }
+
+
+    //                      <--- Implementation -->
+
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+/*
+    public void onBeaconServiceConnect() {
+        beaconManager.removeAllMonitorNotifiers();
+        beaconManager.addMonitorNotifier(new MonitorNotifier() {
+            @Override
+            public void didEnterRegion(Region region) {
+                Log.i(TAG, "I just saw an beacon for the first time!");
+            }
+
+            @Override
+            public void didExitRegion(Region region) {
+                Log.i(TAG, "I no longer see an beacon");
+            }
+
+            @Override
+            public void didDetermineStateForRegion(int state, Region region) {
+                Log.i(TAG, "I have just switched from seeing/not seeing beacons: "+state);
+            }
+        });
+
+        try {
+            beaconManager.startMonitoringBeaconsInRegion(new Region("myMonitoringUniqueId", null, null, null));
+        } catch (RemoteException e) {    }
+    }
+*/
 
 }

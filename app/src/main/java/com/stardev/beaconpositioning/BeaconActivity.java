@@ -17,17 +17,16 @@
  import android.widget.ArrayAdapter;
  import android.widget.ListView;
  import android.widget.Toast;
- import com.github.pwittchen.reactivebeacons.library.rx2.Beacon;
- import com.github.pwittchen.reactivebeacons.library.rx2.Proximity;
- import com.github.pwittchen.reactivebeacons.library.rx2.ReactiveBeacons;
+
  import io.reactivex.android.schedulers.AndroidSchedulers;
- import io.reactivex.annotations.NonNull;
+
  import io.reactivex.disposables.Disposable;
  import io.reactivex.functions.Consumer;
  import io.reactivex.schedulers.Schedulers;
- import java.util.ArrayList;
+
+
  import java.util.HashMap;
- import java.util.List;
+
  import java.util.Map;
 
  import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -72,7 +71,7 @@
                  .subscribeOn(Schedulers.computation())
                  .observeOn(AndroidSchedulers.mainThread())
                  .subscribe(new Consumer<Beacon>() {
-                     @Override public void accept(@NonNull Beacon beacon) throws Exception {
+                     @Override public void accept(Beacon beacon) throws Exception {
                          beacons.put(beacon.device.getAddress(), beacon);
                          beaconDataArrived(beacon);
                      }
