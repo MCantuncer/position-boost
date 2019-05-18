@@ -23,17 +23,25 @@ import android.util.Log;
 import java.util.Arrays;
 
 public class Beacon {
+
+  public int prev_rssi;
   public final BluetoothDevice device;
-  public final int rssi; // Received Signal Strength Indication
+  public final double rssi; // Received Signal Strength Indication
   public final byte[] scanRecord;
   public final int txPower; // The Transmit Power Level characteristics in dBm
   public final MacAddress macAddress;
+  private boolean isInitialized = false;
 
-  public Beacon(BluetoothDevice device, int rssi, byte[] scanRecord) {
+  private double estimatedRSSI;//calculated rssi
+  private double errorCovarianceRSSI;//calculated covariance
+  private double processNoise = 0.125;
+  private double measurementNoise = 0.8;
+
+  public Beacon(BluetoothDevice device, double rssi, byte[] scanRecord) {
     this.device = device;
     this.rssi = rssi;
     this.scanRecord = scanRecord;
-    this.txPower = -72; // default value for Estimote and Kontakt.io beacons
+    this.txPower = -59; // default value for Estimote and Kontakt.io beacons
     this.macAddress = new MacAddress(device.getAddress()); // contains validated MAC address
   }
 
@@ -44,6 +52,26 @@ public class Beacon {
   @SuppressLint("NewApi")
   public static Beacon create(ScanResult result) {
     return create(result.getDevice(), result.getRssi(), result.getScanRecord().getBytes());
+  }
+
+  public double applyFilter() {
+    double priorRSSI;
+    double kalmanGain;
+    double priorErrorCovarianceRSSI;
+    if (!isInitialized) {
+      priorRSSI = rssi;
+      priorErrorCovarianceRSSI = 1;
+      isInitialized = true;
+    } else {
+      priorRSSI = estimatedRSSI;
+      priorErrorCovarianceRSSI = errorCovarianceRSSI + processNoise;
+    }
+
+    kalmanGain = priorErrorCovarianceRSSI / (priorErrorCovarianceRSSI + measurementNoise);
+    estimatedRSSI = priorRSSI + (kalmanGain * (rssi - priorRSSI));
+    errorCovarianceRSSI = (1 - kalmanGain) * priorErrorCovarianceRSSI;
+
+    return estimatedRSSI;
   }
 
   /**
@@ -71,9 +99,10 @@ public class Beacon {
     return Proximity.FAR;
   }
 
-  private double getDistance(int rssi, int txPower) {
-
-    Log.i("Beacon", "in getDistance");
+  private double getDistance(double rssi, int txPower) {
+    double filter_res = applyFilter();
+    isInitialized = false;
+    Log.i("RSSI - Kalman", filter_res + "");
     return Math.pow(10d, ((double) txPower - rssi) / (10 * 2));
   }
 
@@ -105,7 +134,7 @@ public class Beacon {
 
   @Override public int hashCode() {
     int result = device.hashCode();
-    result = 31 * result + rssi;
+    result = 31 * result + (int)rssi;
     result = 31 * result + (scanRecord != null ? Arrays.hashCode(scanRecord) : 0);
     return result;
   }

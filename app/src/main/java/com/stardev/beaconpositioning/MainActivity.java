@@ -21,6 +21,32 @@ public class MainActivity extends BeaconActivity {
     private final String TAG = "MainActivity";
     private ImageView imageView;
 
+
+    private double current_rssi1 = 99999;
+    private double current_rssi2 = 99999;
+    private double current_rssi3 = 99999;
+    private double current_rssi4 = 99999;
+
+    private double txPower = -70;
+
+    private double distance1 = 0 ;
+    private double distance2 = 0;
+    private double distance3 = 0;
+    private double distance4 = 0;
+
+
+
+    private int mac1 = 0;
+    private int mac2 = 0;
+    private int mac3 = 0;
+    private int mac4 = 0;
+
+
+    private double previous_rssi_beacon1 = -9999999;
+    private double previous_rssi_beacon2 = -9999999;
+    private double previous_rssi_beacon3 = -9999999;
+    private double previous_rssi_beacon4 = -9999999;
+
     public static final float REAL_WIDTH = 8.24f;
     public static final float REAL_HEIGHT = 8.68f;
     public static final int BEACON_ICON_SIZE = 100;
@@ -35,7 +61,15 @@ public class MainActivity extends BeaconActivity {
 
 
     };
+
+    private PointF p1 = new PointF(2,4);
+    private PointF p2 = new PointF(7.5f,7.5f);
+    private PointF p3 = new PointF(7.5f,2);
+    private PointF p4 = new PointF(1f,1f);
+
+
     private Bitmap planBitmap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +171,7 @@ public class MainActivity extends BeaconActivity {
 
     }
 
+
     private void drawUserLocation(PointF userCoordinates){
 
         // Convert meters to pixels
@@ -176,28 +211,111 @@ public class MainActivity extends BeaconActivity {
         imageView.invalidate();
     }
 
+
+
+
     @Override
     protected void beaconDataArrived(Beacon beacon) {
 
+        if(beacon.macAddress.address.equals("00:13:AA:00:0A:3C")) {
+            current_rssi1 = beacon.rssi;
+            if(previous_rssi_beacon1 == -9999999){
+                previous_rssi_beacon1 = beacon.rssi;
+            }
+            else{
+                current_rssi1 = previous_rssi_beacon1 - (0.1 * (previous_rssi_beacon1- current_rssi1));
+                Log.i("RSSI - Arma", current_rssi1 + "");
+            }
+
+            mac1++;
+
+            distance1 = Math.pow(10d, ((double) txPower - current_rssi1) / (10 * 1.82));
+            Log.i(TAG, "Device: + " + beacon.device + " RSSI: " + current_rssi1 + " Distance: " + distance1  + " Current counter1: " + mac1) ;
+
+        }
+
+        else if(beacon.macAddress.address.equals("00:13:AA:00:11:84")) {
 
 
+            current_rssi2 = beacon.rssi;
+            if(previous_rssi_beacon2 == -9999999){
+                previous_rssi_beacon2 = beacon.rssi;
+            }
+            else{
+                current_rssi2 = previous_rssi_beacon2 - (0.7 * (previous_rssi_beacon2 - current_rssi2));
+                Log.i("RSSI - Arma", current_rssi2 + "");
+            }
 
-        if(beacon.macAddress.address.equals("00:13:AA:00:0A:3C")) // Dummy
-            Log.i(TAG, "Address: "+ beacon.macAddress.address + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
+            mac2++;
+            distance2 = Math.pow(10d, ((double) txPower - current_rssi2) / (10 * 1.82));
+            Log.i(TAG, "Device: + " + beacon.device + " RSSI: " + current_rssi2 + " Distance: " + distance2 + " Current counter2: " + mac2) ;
+
+        }
+        else if(beacon.macAddress.address.equals("00:13:AA:00:09:C4")) {
+
+            current_rssi3 = beacon.rssi;
+            if(previous_rssi_beacon3 == -9999999){
+                previous_rssi_beacon3 = beacon.rssi;
+            }
+            else{
+                current_rssi3 = previous_rssi_beacon3 - (0.7 * (previous_rssi_beacon3 - current_rssi3));
+                Log.i("RSSI - Arma", current_rssi3 + "");
+            }
+
+            distance3 = Math.pow(10d, ((double) txPower - current_rssi3) / (10 * 1.82));
+            mac3++;
+            Log.i(TAG, "Device: + " + beacon.device + " RSSI: " + current_rssi3 + " Distance: " + distance3 + " Current counter2: " + mac3) ;
+
+        }
+        else if(beacon.macAddress.address.equals("00:15:83:40:B2:8C")) {
 
 
-        else if(beacon.macAddress.address.equals("00:13:AA:00:11:84")) // Dummy
-            Log.i(TAG, "Address: "+ beacon.macAddress.address + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
+            current_rssi4 = beacon.rssi;
+            if(previous_rssi_beacon4 == -9999999){
+                previous_rssi_beacon4 = beacon.rssi;
+            }
+            else{
+                current_rssi4 = previous_rssi_beacon4 - (0.7 * (previous_rssi_beacon4 - current_rssi4));
+                Log.i("RSSI - Arma", current_rssi4 + "");
+            }
 
-        else if(beacon.macAddress.address.equals("00:13:AA:00:09:C4")) // Dummy
-            Log.i(TAG, "Address: "+ beacon.macAddress.address + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
-
+            distance4 = Math.pow(10d, ((double) txPower - current_rssi4) / (10 * 1.82));
+            mac4++;
+            Log.i(TAG, "Device: + " + beacon.device + " RSSI: " + current_rssi4 + " Distance: " + distance4 + " Current counter2: " + mac4) ;
+        }
 
         //Log.d(TAG,"Address: "+ beacon.macAddress + " RSSI: " + beacon.rssi + " Distance: " + beacon.getDistance());
+
+
+        if(current_rssi1 != 99999 && current_rssi2 != 99999 && current_rssi3 != 99999 && current_rssi4 != 99999){
+
+            float A = (float) (Math.pow(distance2, 2) - Math.pow(distance1, 2) - (Math.pow(p2.x, 2)) + (Math.pow(p1.x, 2)) - (Math.pow(p2.y, 2)) + (Math.pow(p1.y, 2)));
+            float B = (float) (Math.pow(distance3, 2) - Math.pow(distance1, 2) - (Math.pow(p3.x, 2)) + (Math.pow(p1.x, 2)) - (Math.pow(p3.y, 2)) + (Math.pow(p1.y, 2)));
+            float delta = (float) ((4.0d) * (p1.x - p2.x) * (p1.y - p3.y) - (p1.x - p3.x) * (p1.y - p2.y));
+            float x0 = (float) ((1.0d / delta) * (2.0d * A * (p1.y - p3.y) - 2.0d * B * (p1.y - p2.y)));
+            float y0 = (float) ((1.0d / delta) * (2.0d * B * (p1.x - p2.x) - 2.0d * A * (p1.x - p3.x)));
+
+            Log.i("Ucgen distance", "(x,y): " + x0 + ", " + y0);
+
+
+        }
+
+
+    /*
+
+            Double A = (d2 * d2) - (d1 * d1) - (x2 * x2) + (x1 * x1) - (y2 * y2) + (y1 * y1);
+            Double B = (d3 * d3) - (d1 * d1) - (x3 * x3) + (x1 * x1) - (y3 * y3) + (y1 * y1);
+            Double delta = (4.0d) * ((x1 - x2) * (y1 - y3) - (x1 - x3) * (y1 - y2));
+            Double x0 = (1.0d / delta) * (2.0d * A * (y1 - y3) - 2.0d * B * (y1 - y2));
+            Double y0 = (1.0d / delta) * (2.0d * B * (x1 - x2) - 2.0d * A * (x1 - x3));
+
+     */
+
+
+
     }
 
 
-    //                      <--- Implementation -->
 
     protected void onDestroy() {
         super.onDestroy();

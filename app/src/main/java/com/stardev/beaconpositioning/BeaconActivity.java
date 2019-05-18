@@ -97,7 +97,7 @@
 
          return true;
      }
-
+/*
      private String getBeaconItemString(Beacon beacon) {
          String mac = beacon.device.getAddress();
          int rssi = beacon.rssi;
@@ -106,7 +106,7 @@
          String name = beacon.device.getName();
          return String.format(ITEM_FORMAT, mac, rssi, distance, proximity, name);
      }
-
+*/
      @Override protected void onPause() {
          super.onPause();
          if (subscription != null && !subscription.isDisposed()) {
