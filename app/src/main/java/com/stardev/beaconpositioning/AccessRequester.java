@@ -60,8 +60,8 @@ class AccessRequester {
   private AlertDialog.Builder buildLocationAccessDialog(Activity activity,
       DialogInterface.OnClickListener onOkClickListener) {
     final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-    builder.setTitle("Konum Izni");
-    builder.setMessage("Izin veriyor musun?");
+    builder.setTitle(R.string.requesting_location_access);
+    builder.setMessage(R.string.do_you_want_to_open_location_settings);
     builder.setPositiveButton(android.R.string.ok, onOkClickListener);
     builder.setNegativeButton(android.R.string.no, null);
     builder.setCancelable(true);
